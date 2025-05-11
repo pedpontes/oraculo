@@ -1,9 +1,14 @@
 export type ChatModel = {
-  name: string;
+  id: string;
   messages: MessageModel[];
 };
 
 export type MessageModel = {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
+};
+
+export type ChatRequestModel = {
+  id: string;
+  message: string;
 };

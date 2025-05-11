@@ -2,6 +2,7 @@ import { ENV } from '@/main/config/config';
 import { ApiProtocols } from '@/services/protocols/axios/axios';
 import {
   ChatCompletionRequestModel,
+  ChatCompletionResponseModel,
   OpenAiProtocols,
 } from '@/services/protocols/openai/openai';
 
@@ -25,7 +26,18 @@ export class OpenAiHelper implements OpenAiProtocols {
     this.apiKey = ENV.openAi.apiKey || '';
   }
 
-  async loadChatCompletions(data: ChatCompletionRequestModel): Promise<void> {
-    this.axiosHelper.post(this.baseApiUrl); //TODO: Create method to load chat completions
+  async loadChatCompletions(
+    data: ChatCompletionRequestModel
+  ): Promise<ChatCompletionResponseModel> {
+    return await this.axiosHelper.post(
+      this.baseApiUrl + '/chat/completions',
+      data,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+      }
+    );
   }
 }
