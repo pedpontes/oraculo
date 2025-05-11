@@ -9,7 +9,7 @@ const rl = readline.createInterface({
 });
 
 ws.onopen = () => {
-  console.log('🟢 Conectado! Pressione Enter para enviar a mensagem.');
+  console.log('🟢 Conectado! Escreva mensagem e aperte enter para enviar.');
 
   rl.on('line', (messageInput) => {
     const message: ChatRequestModel = {
@@ -26,7 +26,10 @@ ws.onmessage = async (event) => {
   const blob = new Blob([event.data]);
   const content: MessageModel[] = JSON.parse(await blob.text());
 
-  console.log('📩 Resposta do servidor:', content[content.length - 1].content);
+  console.log(
+    '📩 Resposta do servidor:',
+    content[content.length - 1]?.content ?? content
+  );
 };
 
 ws.onerror = (err) => {
