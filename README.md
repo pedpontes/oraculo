@@ -6,6 +6,9 @@ Um dispositivo simples para fins educacionais e para o público infantil, no qua
 
 #### Stacks:
 
+- Yarn
+- TypeScript
+- Node
 - Fastify
 - Fastify (WebSocket)
 - Axios (Client HTTP)
