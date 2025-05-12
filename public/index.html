@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vosk WebSocket TTS</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+        color: #333;
+      }
+      header {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 0;
+        text-align: center;
+      }
+      .container {
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .conversation {
+        list-style-type: none;
+        padding: 0;
+      }
+      .conversation li {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+      }
+      .user-msg {
+        background-color: #d4edda;
+        padding: 10px;
+        border-radius: 5px;
+        align-self: flex-start;
+      }
+      .server-msg {
+        background-color: #f8d7da;
+        padding: 10px;
+        border-radius: 5px;
+        align-self: flex-end;
+      }
+      button {
+        padding: 10px 15px;
+        font-size: 16px;
+        margin: 10px 0;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+      #status {
+        font-size: 18px;
+        margin-top: 20px;
+        text-align: center;
+      }
+      audio {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Grave sua voz</h1>
+    </header>
+    <div class="container">
+      <button id="startButton">Iniciar Gravação</button>
+      <button id="stopButton" disabled>Parar Gravação</button>
+      <p id="status">Clique em "Iniciar Gravação" para começar.</p>
+      <ul class="conversation" id="conversationList"></ul>
+    </div>
+
+    <script>
+      const socket = new WebSocket('ws://localhost:8080/chat');
+
+      socket.onopen = function () {
+        document.getElementById('status').innerText =
+          'Conectado ao servidor WebSocket';
+      };
+
+      socket.onmessage = function (event) {
+        try {
+          const audioBuffer = event.data;
+          const audioBlob = new Blob([audioBuffer], { type: 'audio/mp3' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+
+          const conversationList = document.getElementById('conversationList');
+
+          const serverMsg = document.createElement('li');
+          serverMsg.classList.add('server-msg');
+          const audioElement = document.createElement('audio');
+          audioElement.controls = true;
+          audioElement.src = audioUrl;
+          serverMsg.appendChild(audioElement);
+          conversationList.appendChild(serverMsg);
+
+          audio.play();
+
+          document.getElementById('startButton').disabled = false;
+          document.getElementById('stopButton').disabled = true;
+          document.getElementById('status').innerText = 'Gravação parada.';
+        } catch (error) {
+          console.error('Erro ao processar a mensagem do servidor:', error);
+        }
+      };
+
+      const startButton = document.getElementById('startButton');
+      const stopButton = document.getElementById('stopButton');
+      const statusElement = document.getElementById('status');
+
+      if (!('webkitSpeechRecognition' in window)) {
+        statusElement.innerText =
+          'Desculpe, seu navegador não suporta reconhecimento de voz.';
+      } else {
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        let lastResultTime = 0;
+        let timeout;
+
+        recognition.onstart = function () {
+          statusElement.innerText = 'Gravando...';
+          startButton.disabled = true;
+          stopButton.disabled = false;
+        };
+
+        recognition.onresult = function (event) {
+          const transcript = event.results[event.resultIndex][0].transcript;
+          console.log('Texto transcrito: ', transcript);
+
+          if (timeout) {
+            clearTimeout(timeout);
+          }
+
+          lastResultTime = Date.now();
+
+          timeout = setTimeout(function () {
+            console.log('Enviando texto para o servidor:', transcript);
+            try {
+              socket.send(
+                JSON.stringify({
+                  id: '123456',
+                  message: transcript,
+                })
+              );
+
+              const conversationList =
+                document.getElementById('conversationList');
+              const userMsg = document.createElement('li');
+              userMsg.classList.add('user-msg');
+              userMsg.textContent = transcript;
+              conversationList.appendChild(userMsg);
+            } catch (error) {
+              console.error('Erro ao enviar o texto para o servidor:', error);
+            }
+          }, 3000);
+        };
+
+        recognition.onerror = function (event) {
+          statusElement.innerText =
+            'Erro no reconhecimento de voz: ' + event.error;
+        };
+
+        startButton.onclick = function () {
+          recognition.start();
+        };
+
+        stopButton.onclick = function () {
+          recognition.stop();
+          statusElement.innerText = 'Gravação parada.';
+          startButton.disabled = false;
+          stopButton.disabled = true;
+        };
+      }
+    </script>
+  </body>
+</html>

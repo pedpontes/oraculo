@@ -1,5 +1,7 @@
+import fastifyStatic from '@fastify/static';
 import { fastifyWebsocket } from '@fastify/websocket';
 import fastify from 'fastify';
+import path from 'path';
 import { ENV } from './config/config';
 import websocketRoutes from './sockets/index';
 
@@ -7,6 +9,15 @@ const app = fastify({ logger: true });
 
 app.register(fastifyWebsocket);
 app.register(websocketRoutes);
+
+app.register(fastifyStatic, {
+  root: path.join(__dirname, '../../public'),
+  prefix: '/',
+});
+
+app.get('/', async (request, reply) => {
+  return reply.sendFile('index.html');
+});
 
 app.listen({ port: Number(ENV.PORT) }, (err, address) => {
   if (err) {

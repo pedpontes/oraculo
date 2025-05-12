@@ -27,7 +27,7 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
       message: data.message.toString(),
     });
 
-    await this.TTSUseCase.execute(responseString);
+    const bufferAudio = await this.TTSUseCase.execute(responseString);
 
     ChatState.updateChat(data.id, {
       messages: [
@@ -41,6 +41,7 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
       JSON.stringify(ChatState.loadChat(data.id), null, 2)
     );
 
-    return Buffer.from(JSON.stringify(ChatState.loadChat(data.id).messages));
+    // return Buffer.from(JSON.stringify(ChatState.loadChat(data.id).messages));
+    return bufferAudio;
   }
 }
