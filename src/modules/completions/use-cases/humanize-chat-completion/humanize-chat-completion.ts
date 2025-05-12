@@ -26,6 +26,7 @@ export class HumanizeChatCompletionUseCase implements HumanizeChatCompletion {
       const response = await this.openAiHelper.loadChatCompletions({
         model: 'gpt-3.5-turbo',
         messages: messageSend,
+        max_completion_tokens: 1000,
         n: 1,
         temperature: 0.7,
         modalities: ['text'],
