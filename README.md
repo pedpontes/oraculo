@@ -27,5 +27,4 @@ Um dispositivo simples para fins educacionais e para o público infantil, no qua
 #### Testando `chat completion` (texto):
 
 - Inicie o serviço como destacado em `Como iniciar`
-- Abra um novo terminal e execute `yarn test:ws`
-- Comece a conversar com seu assistente via texto.
+- Se tudo estiver certo, acesse interface WEB pelo link `http://localhost:{PORT}/` (Verifique a porta no seu `.env`)
