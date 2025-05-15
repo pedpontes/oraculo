@@ -22,5 +22,5 @@ Um dispositivo simples para fins educacionais e para o público infantil, no qua
 
 - Verifique as variaveis de ambiente `.env.example`.
 - Instale as dependencias através do `yarn`
-- Inicie em modo dev com `yarn dev`
+- Inicie em modo produção com `yarn start` ou dev com `yarn dev`
 - Se tudo estiver certo, acesse interface WEB pelo link `http://localhost:{PORT}/` (Verifique a porta no seu `.env`)
