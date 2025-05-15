@@ -1,5 +1,5 @@
 import { ChatState } from '@/main/states/chat-state.global';
-import { OpenAiProtocols } from '@/services/protocols/openai/openai';
+import { SelectEngine } from '../select-engine/select-engine';
 import { humanizeChatCompletionPrompt } from './humanize-chat-completion-prompt';
 
 export interface HumanizeChatCompletion {
@@ -7,7 +7,7 @@ export interface HumanizeChatCompletion {
 }
 
 export class HumanizeChatCompletionUseCase implements HumanizeChatCompletion {
-  constructor(private readonly openAiHelper: OpenAiProtocols) {}
+  constructor(private readonly selectEngineUseCase: SelectEngine) {}
 
   async execute(data: { id: string; message: string }): Promise<string> {
     const messageSend: {
@@ -23,8 +23,8 @@ export class HumanizeChatCompletionUseCase implements HumanizeChatCompletion {
     ];
 
     try {
-      const response = await this.openAiHelper.loadChatCompletions({
-        model: 'gpt-3.5-turbo',
+      const response = await this.selectEngineUseCase.execute({
+        model: 'openchat',
         messages: messageSend,
         max_completion_tokens: 1000,
         n: 1,

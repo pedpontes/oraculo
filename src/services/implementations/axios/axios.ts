@@ -13,9 +13,7 @@ export class AxiosHelper implements ApiProtocols {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<T> {
-    return await axios.post(url, data, config).then((res) => {
-      return res.data;
-    });
+    return await axios.post(url, data, config);
   }
 
   async put<T = any>(
@@ -23,15 +21,11 @@ export class AxiosHelper implements ApiProtocols {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<T> {
-    return await axios.put(url, data, config).then((res) => {
-      return res.data;
-    });
+    return await axios.put(url, data, config);
   }
 
   async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return await axios.delete(url, config).then((res) => {
-      return res.data;
-    });
+    return await axios.delete(url, config);
   }
 
   async patch<T = any>(
@@ -39,8 +33,6 @@ export class AxiosHelper implements ApiProtocols {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<T> {
-    return await axios.patch(url, data, config).then((res) => {
-      return res.data;
-    });
+    return await axios.patch(url, data, config);
   }
 }

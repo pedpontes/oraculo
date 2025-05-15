@@ -29,15 +29,13 @@ export class OpenAiHelper implements OpenAiProtocols {
   async loadChatCompletions(
     data: ChatCompletionRequestModel
   ): Promise<ChatCompletionResponseModel> {
-    return await this.axiosHelper.post(
-      this.baseApiUrl + '/chat/completions',
-      data,
-      {
+    return await this.axiosHelper
+      .post(this.baseApiUrl + '/chat/completions', data, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.apiKey}`,
         },
-      }
-    );
+      })
+      .then((res) => res.data);
   }
 }
