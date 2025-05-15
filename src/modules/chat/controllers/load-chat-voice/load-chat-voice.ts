@@ -18,7 +18,7 @@ export class LoadChatVoiceController implements WebSocketController {
         message: data.message,
       });
 
-      socket.send(response);
+      socket.send(JSON.stringify(response));
     } catch (error) {
       if (error instanceof Error) {
         socket.send(

@@ -4,7 +4,13 @@ import { HumanizeChatCompletion } from '@/modules/completions/use-cases/humanize
 import { TTS } from '@/modules/tts/use-cases/tts';
 
 export interface LoadChatVoice {
-  execute(data: ChatRequestModel): Promise<Buffer>;
+  execute(data: ChatRequestModel): Promise<{
+    type: string;
+    data: {
+      messages: Array<{ role: string; content: string }>;
+      audio: string;
+    };
+  }>;
 }
 
 export class LoadChatVoiceUseCase implements LoadChatVoice {
@@ -13,7 +19,13 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
     private readonly TTSUseCase: TTS
   ) {}
 
-  async execute(data: ChatRequestModel): Promise<Buffer> {
+  async execute(data: ChatRequestModel): Promise<{
+    type: string;
+    data: {
+      messages: Array<{ role: string; content: string }>;
+      audio: string;
+    };
+  }> {
     const chatHistory = ChatState.loadChat(data.id);
     ChatState.updateChat(data.id, {
       messages: [
@@ -41,7 +53,12 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
       JSON.stringify(ChatState.loadChat(data.id), null, 2)
     );
 
-    // return Buffer.from(JSON.stringify(ChatState.loadChat(data.id).messages));
-    return bufferAudio;
+    return {
+      type: 'audio_history_messages',
+      data: {
+        messages: ChatState.loadChat(data.id).messages,
+        audio: bufferAudio.toString('base64'),
+      },
+    };
   }
 }
