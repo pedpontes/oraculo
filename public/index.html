@@ -78,6 +78,16 @@
     </div>
 
     <script>
+      function base64ToUint8Array(base64) {
+        const raw = atob(base64);
+        const rawLength = raw.length;
+        const array = new Uint8Array(rawLength);
+        for (let i = 0; i < rawLength; i++) {
+          array[i] = raw.charCodeAt(i);
+        }
+        return array;
+      }
+
       const socket = new WebSocket('ws://localhost:8080/chat');
 
       socket.onopen = function () {
@@ -87,8 +97,10 @@
 
       socket.onmessage = function (event) {
         try {
-          const audioBuffer = event.data;
-          const audioBlob = new Blob([audioBuffer], { type: 'audio/mp3' });
+          const { data, type } = JSON.parse(event.data);
+
+          const audioBytes = base64ToUint8Array(data.audio);
+          const audioBlob = new Blob([audioBytes], { type: 'audio/mp3' });
           const audioUrl = URL.createObjectURL(audioBlob);
           const audio = new Audio(audioUrl);
 
@@ -99,14 +111,17 @@
           const audioElement = document.createElement('audio');
           audioElement.controls = true;
           audioElement.src = audioUrl;
+          serverMsg.appendChild(
+            document.createTextNode(
+              `Assistente: ${
+                data?.messages?.length
+                  ? data.messages[data.messages.length - 1].content
+                  : ''
+              }`
+            )
+          );
           serverMsg.appendChild(audioElement);
           conversationList.appendChild(serverMsg);
-
-          audio.play();
-
-          document.getElementById('startButton').disabled = false;
-          document.getElementById('stopButton').disabled = true;
-          document.getElementById('status').innerText = 'Gravação parada.';
         } catch (error) {
           console.error('Erro ao processar a mensagem do servidor:', error);
         }
