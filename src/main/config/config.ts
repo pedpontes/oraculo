@@ -7,6 +7,7 @@ if (envFound.error) {
 }
 
 export const ENV = {
+  NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 8080,
   openAi: {
     apiKey: process.env.OPENAI_API_KEY || '',

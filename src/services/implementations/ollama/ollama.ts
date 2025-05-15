@@ -10,7 +10,7 @@ import { randomUUID } from 'crypto';
 export class OllamaHelper implements OllamaAiProtocols {
   private readonly baseApiUrl: string;
   constructor(private readonly axiosHelper: ApiProtocols) {
-    this.baseApiUrl = 'http://localhost:11434/api/chat';
+    this.baseApiUrl = 'http://ollama:11434/api/chat';
   }
 
   async loadChatCompletions(

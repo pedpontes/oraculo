@@ -21,10 +21,19 @@ app.get('/', async (request, reply) => {
   return reply.sendFile('index.html');
 });
 
-app.listen({ port: Number(ENV.PORT) }, (err, address) => {
-  if (err) {
-    app.log.error('[Error] ' + err);
-    return;
-  }
-  app.log.info(`[INFO] Server listening at ${address}`);
-});
+if (ENV.NODE_ENV == 'production') {
+  app.listen({ port: Number(ENV.PORT), host: '0.0.0.0' }, (err, address) => {
+    if (err) {
+      app.log.error('[Error] ' + err);
+      return;
+    }
+    app.log.info(`[INFO] Server listening at ${address}`);
+  });
+} else
+  app.listen({ port: Number(ENV.PORT) }, (err, address) => {
+    if (err) {
+      app.log.error('[Error] ' + err);
+      return;
+    }
+    app.log.info(`[INFO] Server listening at ${address}`);
+  });
