@@ -1,3 +1,5 @@
+import 'module-alias/register';
+
 import fastifyStatic from '@fastify/static';
 import { fastifyWebsocket } from '@fastify/websocket';
 import fastify from 'fastify';
