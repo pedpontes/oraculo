@@ -39,7 +39,13 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
       message: data.message.toString(),
     });
 
-    const bufferAudio = await this.TTSUseCase.execute(responseString);
+    let bufferAudio: Buffer;
+
+    try {
+      bufferAudio = await this.TTSUseCase.execute(responseString);
+    } catch (error) {
+      bufferAudio = Buffer.from('');
+    }
 
     ChatState.updateChat(data.id, {
       messages: [

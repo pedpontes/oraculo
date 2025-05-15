@@ -15,6 +15,11 @@ services:
         '-c',
         'ollama serve & sleep 3 && ollama pull openchat && tail -f /dev/null',
       ]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
 
   oraculo:
     build:

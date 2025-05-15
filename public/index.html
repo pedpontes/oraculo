@@ -88,7 +88,7 @@
         return array;
       }
 
-      const socket = new WebSocket('ws://localhost:8080/chat');
+      const socket = new WebSocket('wss://oraculo-ic.ddns.net/chat');
 
       socket.onopen = function () {
         document.getElementById('status').innerText =
