@@ -6,6 +6,7 @@ import fastify from 'fastify';
 import path from 'path';
 import { ENV } from './config/config';
 import websocketRoutes from './sockets/index';
+import { ChatState } from './states/chat-state.global';
 
 const app = fastify({ logger: true });
 
@@ -19,6 +20,27 @@ app.register(fastifyStatic, {
 
 app.get('/', async (request, reply) => {
   return reply.sendFile('index.html');
+});
+
+app.get('/api/chat', async (request, reply) => {
+  const chats: {
+    id: string;
+    messages: {
+      role: string;
+      content: string;
+    }[];
+  }[] = ChatState.loadAllChats();
+
+  return reply.send({ data: chats, total: chats.length });
+});
+
+app.get('/api/chat/:id', async (request, reply) => {
+  const { id } = request.params as { id: string };
+  const chat = ChatState.loadChat(id);
+  if (!chat) {
+    return reply.status(404).send({ message: 'Chat not found' });
+  }
+  return reply.send({ data: chat });
 });
 
 if (ENV.NODE_ENV == 'production') {

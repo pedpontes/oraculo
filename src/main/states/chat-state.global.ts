@@ -9,6 +9,13 @@ export type ChatsGlobalState = {
 const chatsGlobalState: ChatsGlobalState = {};
 
 export class ChatState {
+  static loadAllChats() {
+    return Object.keys(chatsGlobalState).map((key) => ({
+      id: key,
+      ...chatsGlobalState[key],
+    }));
+  }
+
   static loadChat(id: string) {
     return chatsGlobalState[id];
   }
