@@ -3,130 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vosk WebSocket TTS</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f9;
-        color: #333;
-      }
-      header {
-        background-color: #4caf50;
-        color: white;
-        padding: 10px 0;
-        text-align: center;
-      }
-      .container {
-        padding: 20px;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .conversation {
-        list-style-type: none;
-        padding: 0;
-      }
-      .conversation li {
-        margin-bottom: 15px;
-        display: flex;
-        flex-direction: column;
-      }
-      .user-msg {
-        background-color: #d4edda;
-        padding: 10px;
-        border-radius: 5px;
-        align-self: flex-start;
-      }
-      .server-msg {
-        background-color: #f8d7da;
-        padding: 10px;
-        border-radius: 5px;
-        align-self: flex-end;
-      }
-      button {
-        padding: 10px 15px;
-        font-size: 16px;
-        margin: 10px 0;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-      }
-      button:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
-      #status {
-        font-size: 18px;
-        margin-top: 20px;
-        text-align: center;
-      }
-      audio {
-        margin-top: 10px;
-      }
-    </style>
+    <title>Oraculo</title>
+    <link rel="stylesheet" href="style/global.css" />
   </head>
   <body>
     <header>
       <h1>Grave sua voz</h1>
     </header>
     <div class="container">
-      <button id="startButton">Iniciar Gravação</button>
-      <button id="stopButton" disabled>Parar Gravação</button>
+      <div
+        style="
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          text-align: center;
+          padding: 20px;
+        "
+      >
+        <button id="startButton">Iniciar Gravação</button>
+        <button id="stopButton" disabled>Parar Gravação</button>
+      </div>
       <p id="status">Clique em "Iniciar Gravação" para começar.</p>
       <ul class="conversation" id="conversationList"></ul>
     </div>
 
+    <script src="scripts/socket/index.js"></script>
     <script>
-      function base64ToUint8Array(base64) {
-        const raw = atob(base64);
-        const rawLength = raw.length;
-        const array = new Uint8Array(rawLength);
-        for (let i = 0; i < rawLength; i++) {
-          array[i] = raw.charCodeAt(i);
-        }
-        return array;
-      }
-
-      const socket = new WebSocket('wss://oraculo-ic.ddns.net/chat');
-
-      socket.onopen = function () {
-        document.getElementById('status').innerText =
-          'Conectado ao servidor WebSocket';
-      };
-
-      socket.onmessage = function (event) {
-        try {
-          const { data, type } = JSON.parse(event.data);
-
-          const audioBytes = base64ToUint8Array(data.audio);
-          const audioBlob = new Blob([audioBytes], { type: 'audio/mp3' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const audio = new Audio(audioUrl);
-
-          const conversationList = document.getElementById('conversationList');
-
-          const serverMsg = document.createElement('li');
-          serverMsg.classList.add('server-msg');
-          const audioElement = document.createElement('audio');
-          audioElement.controls = true;
-          audioElement.src = audioUrl;
-          serverMsg.appendChild(
-            document.createTextNode(
-              `Assistente: ${
-                data?.messages?.length
-                  ? data.messages[data.messages.length - 1].content
-                  : ''
-              }`
-            )
-          );
-          serverMsg.appendChild(audioElement);
-          conversationList.appendChild(serverMsg);
-        } catch (error) {
-          console.error('Erro ao processar a mensagem do servidor:', error);
-        }
-      };
-
       const startButton = document.getElementById('startButton');
       const stopButton = document.getElementById('stopButton');
       const statusElement = document.getElementById('status');
