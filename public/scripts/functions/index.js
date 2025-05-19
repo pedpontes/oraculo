@@ -1,4 +1,4 @@
-function base64ToUint8Array(base64) {
+export function base64ToUint8Array(base64) {
   const raw = atob(base64);
   const rawLength = raw.length;
   const array = new Uint8Array(rawLength);
@@ -7,5 +7,3 @@ function base64ToUint8Array(base64) {
   }
   return array;
 }
-
-export { base64ToUint8Array };

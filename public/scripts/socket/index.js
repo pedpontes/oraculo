@@ -1,11 +1,13 @@
-const { base64ToUint8Array } = require('../functions/index');
-const { serverUrl } = require('../main/index');
+import { base64ToUint8Array } from '../functions/index.js';
+import { serverUrl } from '../main/index.js';
 
-let socket;
+var socket;
 
 if (serverUrl.includes('localhost')) {
+  console.log('Conectando ao servidor WebSocket local');
   socket = new WebSocket('ws://' + serverUrl + '/chat');
 } else {
+  console.log('Conectando ao servidor WebSocket remoto');
   socket = new WebSocket('wss://' + serverUrl + '/chat');
 }
 
@@ -44,3 +46,5 @@ socket.onmessage = function (event) {
     console.error('Erro ao processar a mensagem do servidor:', error);
   }
 };
+
+export { socket };

@@ -11,25 +11,38 @@
       <h1>Grave sua voz</h1>
     </header>
     <div class="container">
-      <div
-        style="
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          text-align: center;
-          padding: 20px;
-        "
-      >
+      <div class="navigation-lateral">
+        <ul></ul>
+      </div>
+      <div class="section">
+        <label for="opt-model">Escolha o modelo:</label>
+        <select id="opt-model" name="opt-model">
+          <option selected value="openai">OpenAi</option>
+          <option value="openchat">OpenChat</option>
+        </select>
+        <p id="status">Clique em "Iniciar Gravação" para começar.</p>
+        <ul class="conversation" id="conversationList"></ul>
+      </div>
+      <div class="actions">
         <button id="startButton">Iniciar Gravação</button>
         <button id="stopButton" disabled>Parar Gravação</button>
       </div>
-      <p id="status">Clique em "Iniciar Gravação" para começar.</p>
-      <ul class="conversation" id="conversationList"></ul>
     </div>
 
-    <script src="scripts/socket/index.js"></script>
-    <script>
+    <script type="module" src="./scripts/main/index.js"></script>
+    <script type="module" src="./scripts/socket/index.js"></script>
+    <script type="module" src="./scripts/navibar/index.js"></script>
+    <script type="module" src="./scripts/functions/index.js"></script>
+    <script type="module">
+      import { socket } from './scripts/socket/index.js';
+      import { chatId } from './scripts/main/index.js';
+
+      let model = 'openai';
+      const selectModel = document.getElementById('opt-model');
+      selectModel.addEventListener('change', () => {
+        model = selectModel.value;
+      });
+
       const startButton = document.getElementById('startButton');
       const stopButton = document.getElementById('stopButton');
       const statusElement = document.getElementById('status');
@@ -63,10 +76,16 @@
 
           timeout = setTimeout(function () {
             console.log('Enviando texto para o servidor:', transcript);
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            statusElement.innerText = 'Gravação parada.';
+            recognition.stop();
+
             try {
               socket.send(
                 JSON.stringify({
-                  id: '123456',
+                  id: chatId,
+                  model,
                   message: transcript,
                 })
               );

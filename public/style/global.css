@@ -1,3 +1,35 @@
+*,
+html {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  height: 100vhd;
+  width: 100vwd;
+  overflow: hidden;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  text-decoration: none;
+  color: #333;
+  background-color: #f4f4f9;
+  border-radius: 5px;
+}
+
+.fa-solid {
+  margin-right: 10px;
+}
+.fa-solid:hover {
+  color: #4caf50;
+}
+.fa-comment {
+  color: #4caf50;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -11,10 +43,35 @@ header {
   padding: 10px 0;
   text-align: center;
 }
+.navigation-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100vh;
+  width: 200px;
+  background-color: #bbbbbb;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: center;
+  padding: 10px;
+}
+.section {
+  width: 100%;
+  padding: 10px;
+  overflow: auto;
+}
 .container {
+  display: flex;
+  width: 100%;
+  margin: 0;
+}
+.actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
   padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
 }
 .conversation {
   list-style-type: none;
