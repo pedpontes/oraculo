@@ -2,7 +2,6 @@ import { ApiProtocols } from '@/services/protocols/axios/axios';
 import {
   ChatCompletionResponseModel,
   ModelsChatCompletionOllamaRequest,
-  ModelsChatCompletionOpenAi,
   OllamaAiProtocols,
 } from '@/services/protocols/openai/openai';
 import { randomUUID } from 'crypto';
@@ -10,13 +9,15 @@ import { randomUUID } from 'crypto';
 export class OllamaHelper implements OllamaAiProtocols {
   private readonly baseApiUrl: string;
   constructor(private readonly axiosHelper: ApiProtocols) {
-    this.baseApiUrl = 'http://localhost:11434/api/chat';
+    this.baseApiUrl = 'http://ollama:11434/api/chat';
   }
 
   async loadChatCompletions(
     data: ModelsChatCompletionOllamaRequest
   ): Promise<ChatCompletionResponseModel> {
     const { messages, model } = data;
+
+    console.log('[INFO] [OLLAMA] Loading chat completions...');
 
     const response = await this.axiosHelper.post(
       this.baseApiUrl,
@@ -55,7 +56,7 @@ export class OllamaHelper implements OllamaAiProtocols {
             prompt_tokens: 0,
             total_tokens: 0,
           },
-          model: model as ModelsChatCompletionOpenAi,
+          model: model as any,
           created: Date.now(),
           choices: [
             {

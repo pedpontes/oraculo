@@ -29,13 +29,28 @@ export class OpenAiHelper implements OpenAiProtocols {
   async loadChatCompletions(
     data: ChatCompletionRequestModel
   ): Promise<ChatCompletionResponseModel> {
+    if (!data.model) {
+      throw new Error(
+        '[ERROR] [OPENAI] Model not found in request data for OpenAI API'
+      );
+    }
+
+    console.log('[INFO] [OPENAI] Loading chat completions...');
+
     return await this.axiosHelper
-      .post(this.baseApiUrl + '/chat/completions', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.apiKey}`,
+      .post(
+        this.baseApiUrl + '/chat/completions',
+        {
+          ...data,
+          model: 'gpt-3.5-turbo',
         },
-      })
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.apiKey}`,
+          },
+        }
+      )
       .then((res) => res.data);
   }
 }

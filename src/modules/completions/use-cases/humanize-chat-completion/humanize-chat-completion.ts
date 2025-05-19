@@ -1,15 +1,22 @@
 import { ChatState } from '@/main/states/chat-state.global';
+import { ModelsChatCompletion } from '@/services/protocols/openai/openai';
 import { SelectEngine } from '../select-engine/select-engine';
 import { humanizeChatCompletionPrompt } from './humanize-chat-completion-prompt';
 
 export interface HumanizeChatCompletion {
-  execute(data: { id: string; message: string }): Promise<string>;
+  execute(
+    data: { id: string; message: string },
+    model: 'openchat' | 'openai'
+  ): Promise<string>;
 }
 
 export class HumanizeChatCompletionUseCase implements HumanizeChatCompletion {
   constructor(private readonly selectEngineUseCase: SelectEngine) {}
 
-  async execute(data: { id: string; message: string }): Promise<string> {
+  async execute(
+    data: { id: string; message: string },
+    model: ModelsChatCompletion
+  ): Promise<string> {
     const messageSend: {
       role: 'user' | 'assistant' | 'system';
       content: string;
@@ -24,7 +31,7 @@ export class HumanizeChatCompletionUseCase implements HumanizeChatCompletion {
 
     try {
       const response = await this.selectEngineUseCase.execute({
-        model: 'openchat',
+        model,
         messages: messageSend,
         max_completion_tokens: 1000,
         n: 1,
@@ -32,11 +39,11 @@ export class HumanizeChatCompletionUseCase implements HumanizeChatCompletion {
         modalities: ['text'],
       });
 
-      console.log('Response from OpenAI:', JSON.stringify(response, null, 2));
+      console.log('Response from CHAT:', JSON.stringify(response, null, 2));
 
       return response.choices[0].message.content;
     } catch (error: any) {
-      throw new Error('[ERROR] [OPENAI] ' + error.message);
+      throw new Error('[ERROR] [CHAT_COMPLETION] ' + error.message);
     }
   }
 }

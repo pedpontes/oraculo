@@ -1,5 +1,5 @@
 export type ChatCompletionRequestModel = {
-  model: ModelsChatCompletionOpenAi;
+  model: ModelsChatCompletion;
   messages: Array<{
     role: 'user' | 'assistant' | 'system';
     content: string;
@@ -20,7 +20,7 @@ export type ChatCompletionResponseModel = {
   id: string;
   object: string;
   created: number;
-  model: ModelsChatCompletionOpenAi;
+  model: ModelsChatCompletion;
   choices: Array<{
     index: number;
     message: {
@@ -41,24 +41,18 @@ export type ChatCompletionResponseModel = {
 type ResponseFormatChatCompletionOpenAi = Record<string, any>;
 type ReasoingEffortChatCompletionOpenAi = 'low' | 'medium' | 'high';
 type ModalitiesChatCompletionOpenAi = 'text' | 'audio';
-export type ModelsChatCompletionOpenAi =
-  | 'gpt-3.5-turbo'
-  | 'gpt-4'
-  | 'gpt-4-turbo'
-  | 'openchat';
-
-export type ModelsChatCompletionOllama = 'openchat' | 'llama2' | 'llama3';
+export type ModelsChatCompletion = 'openai' | 'openchat';
 
 export type ModelsChatCompletionOllamaRequest = {
   messages: Array<{
     role: 'user' | 'assistant' | 'system';
     content: string;
   }>;
-  model?: ModelsChatCompletionOllama;
+  model?: ModelsChatCompletion;
 };
 
 export type ModelsChatCompletionOllamaResponse = {
-  model: ModelsChatCompletionOllama;
+  model: ModelsChatCompletion;
   messages: {
     role: string;
     content: string;

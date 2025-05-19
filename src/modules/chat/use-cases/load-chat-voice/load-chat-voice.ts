@@ -2,9 +2,16 @@ import { ChatRequestModel } from '@/domain/models/chat/chat';
 import { ChatState } from '@/main/states/chat-state.global';
 import { HumanizeChatCompletion } from '@/modules/completions/use-cases/humanize-chat-completion/humanize-chat-completion';
 import { TTS } from '@/modules/tts/use-cases/tts';
+import { ModelsChatCompletion } from '@/services/protocols/openai/openai';
 
 export interface LoadChatVoice {
-  execute(data: ChatRequestModel): Promise<Buffer>;
+  execute(data: ChatRequestModel): Promise<{
+    type: string;
+    data: {
+      messages: Array<{ role: string; content: string }>;
+      audio: string;
+    };
+  }>;
 }
 
 export class LoadChatVoiceUseCase implements LoadChatVoice {
@@ -13,7 +20,13 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
     private readonly TTSUseCase: TTS
   ) {}
 
-  async execute(data: ChatRequestModel): Promise<Buffer> {
+  async execute(data: ChatRequestModel): Promise<{
+    type: string;
+    data: {
+      messages: Array<{ role: string; content: string }>;
+      audio: string;
+    };
+  }> {
     const chatHistory = ChatState.loadChat(data.id);
     ChatState.updateChat(data.id, {
       messages: [
@@ -22,12 +35,21 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
       ],
     });
 
-    const responseString = await this.humanizeChatCompletionUseCase.execute({
-      id: data.id,
-      message: data.message.toString(),
-    });
+    const responseString = await this.humanizeChatCompletionUseCase.execute(
+      {
+        id: data.id,
+        message: data.message.toString(),
+      },
+      (data.model ?? 'openai') as ModelsChatCompletion
+    );
 
-    const bufferAudio = await this.TTSUseCase.execute(responseString);
+    let bufferAudio: Buffer;
+
+    try {
+      bufferAudio = await this.TTSUseCase.execute(responseString);
+    } catch (error) {
+      bufferAudio = Buffer.from('');
+    }
 
     ChatState.updateChat(data.id, {
       messages: [
@@ -41,7 +63,12 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
       JSON.stringify(ChatState.loadChat(data.id), null, 2)
     );
 
-    // return Buffer.from(JSON.stringify(ChatState.loadChat(data.id).messages));
-    return bufferAudio;
+    return {
+      type: 'audio_history_messages',
+      data: {
+        messages: ChatState.loadChat(data.id).messages,
+        audio: bufferAudio.toString('base64'),
+      },
+    };
   }
 }

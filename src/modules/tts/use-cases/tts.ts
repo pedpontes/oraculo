@@ -7,7 +7,7 @@ export interface TTS {
 }
 
 export class TTSUseCase implements TTS {
-  #voiceId = 'x6uRgOliu4lpcrqMH3s1';
+  #voiceId = 'EXAVITQu4vr4xnSDxMaL';
 
   constructor(private readonly elevenLabzHelper: ElevenLabzProtocols) {}
 

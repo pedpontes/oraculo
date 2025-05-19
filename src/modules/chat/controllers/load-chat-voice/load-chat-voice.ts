@@ -16,9 +16,10 @@ export class LoadChatVoiceController implements WebSocketController {
       const response = await this.loadChatVoiceUseCase.execute({
         id: data.id,
         message: data.message,
+        model: data.model,
       });
 
-      socket.send(response);
+      socket.send(JSON.stringify(response));
     } catch (error) {
       if (error instanceof Error) {
         socket.send(

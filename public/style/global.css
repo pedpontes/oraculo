@@ -1,0 +1,116 @@
+*,
+html {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  height: 100vhd;
+  width: 100vwd;
+  overflow: hidden;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  text-decoration: none;
+  color: #333;
+  background-color: #f4f4f9;
+  border-radius: 5px;
+}
+
+.fa-solid {
+  margin-right: 10px;
+}
+.fa-solid:hover {
+  color: #4caf50;
+}
+.fa-comment {
+  color: #4caf50;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+  color: #333;
+}
+header {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 0;
+  text-align: center;
+}
+.navigation-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100vh;
+  width: 200px;
+  background-color: #bbbbbb;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: center;
+  padding: 10px;
+}
+.section {
+  width: 100%;
+  padding: 10px;
+  overflow: auto;
+}
+.container {
+  display: flex;
+  width: 100%;
+  margin: 0;
+}
+.actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 20px;
+}
+.conversation {
+  list-style-type: none;
+  padding: 0;
+}
+.conversation li {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+.user-msg {
+  background-color: #d4edda;
+  padding: 10px;
+  border-radius: 5px;
+  align-self: flex-start;
+}
+.server-msg {
+  background-color: #f8d7da;
+  padding: 10px;
+  border-radius: 5px;
+  align-self: flex-end;
+}
+button {
+  padding: 10px 15px;
+  font-size: 16px;
+  margin: 10px 0;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+#status {
+  font-size: 18px;
+  margin-top: 20px;
+  text-align: center;
+}
+audio {
+  margin-top: 10px;
+}

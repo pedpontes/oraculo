@@ -11,4 +11,5 @@ export type MessageModel = {
 export type ChatRequestModel = {
   id: string;
   message: string;
+  model?: string;
 };

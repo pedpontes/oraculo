@@ -3,114 +3,46 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vosk WebSocket TTS</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f9;
-        color: #333;
-      }
-      header {
-        background-color: #4caf50;
-        color: white;
-        padding: 10px 0;
-        text-align: center;
-      }
-      .container {
-        padding: 20px;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .conversation {
-        list-style-type: none;
-        padding: 0;
-      }
-      .conversation li {
-        margin-bottom: 15px;
-        display: flex;
-        flex-direction: column;
-      }
-      .user-msg {
-        background-color: #d4edda;
-        padding: 10px;
-        border-radius: 5px;
-        align-self: flex-start;
-      }
-      .server-msg {
-        background-color: #f8d7da;
-        padding: 10px;
-        border-radius: 5px;
-        align-self: flex-end;
-      }
-      button {
-        padding: 10px 15px;
-        font-size: 16px;
-        margin: 10px 0;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-      }
-      button:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
-      #status {
-        font-size: 18px;
-        margin-top: 20px;
-        text-align: center;
-      }
-      audio {
-        margin-top: 10px;
-      }
-    </style>
+    <title>Oraculo</title>
+    <link rel="stylesheet" href="style/global.css" />
   </head>
   <body>
     <header>
       <h1>Grave sua voz</h1>
     </header>
     <div class="container">
-      <button id="startButton">Iniciar Gravação</button>
-      <button id="stopButton" disabled>Parar Gravação</button>
-      <p id="status">Clique em "Iniciar Gravação" para começar.</p>
-      <ul class="conversation" id="conversationList"></ul>
+      <div style="color: white" class="navigation-lateral">
+        <p>Chats</p>
+        <ul style="width: 100%" class="navigation-lateral"></ul>
+      </div>
+      <div class="section">
+        <label for="opt-model">Escolha o modelo:</label>
+        <select id="opt-model" name="opt-model">
+          <option selected value="openai">OpenAi</option>
+          <option value="openchat">OpenChat</option>
+        </select>
+        <p id="status">Clique em "Iniciar Gravação" para começar.</p>
+        <ul class="conversation" id="conversationList"></ul>
+      </div>
+      <div class="actions">
+        <button id="startButton">Iniciar Gravação</button>
+        <button id="stopButton" disabled>Parar Gravação</button>
+      </div>
     </div>
 
-    <script>
-      const socket = new WebSocket('ws://localhost:8080/chat');
+    <script type="module" src="./scripts/main/index.js"></script>
+    <script type="module" src="./scripts/socket/index.js"></script>
+    <script type="module" src="./scripts/navibar/index.js"></script>
+    <script type="module" src="./scripts/functions/index.js"></script>
+    <script type="module">
+      import { socket } from './scripts/socket/index.js';
+      import { chatId } from './scripts/main/index.js';
 
-      socket.onopen = function () {
-        document.getElementById('status').innerText =
-          'Conectado ao servidor WebSocket';
-      };
-
-      socket.onmessage = function (event) {
-        try {
-          const audioBuffer = event.data;
-          const audioBlob = new Blob([audioBuffer], { type: 'audio/mp3' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const audio = new Audio(audioUrl);
-
-          const conversationList = document.getElementById('conversationList');
-
-          const serverMsg = document.createElement('li');
-          serverMsg.classList.add('server-msg');
-          const audioElement = document.createElement('audio');
-          audioElement.controls = true;
-          audioElement.src = audioUrl;
-          serverMsg.appendChild(audioElement);
-          conversationList.appendChild(serverMsg);
-
-          audio.play();
-
-          document.getElementById('startButton').disabled = false;
-          document.getElementById('stopButton').disabled = true;
-          document.getElementById('status').innerText = 'Gravação parada.';
-        } catch (error) {
-          console.error('Erro ao processar a mensagem do servidor:', error);
-        }
-      };
+      let model = 'openai';
+      const selectModel = document.getElementById('opt-model');
+      selectModel.addEventListener('change', () => {
+        model = selectModel.value;
+      });
 
       const startButton = document.getElementById('startButton');
       const stopButton = document.getElementById('stopButton');
@@ -145,10 +77,16 @@
 
           timeout = setTimeout(function () {
             console.log('Enviando texto para o servidor:', transcript);
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            statusElement.innerText = 'Gravação parada.';
+            recognition.stop();
+
             try {
               socket.send(
                 JSON.stringify({
-                  id: '123456',
+                  id: chatId,
+                  model,
                   message: transcript,
                 })
               );
