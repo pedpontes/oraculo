@@ -5,6 +5,7 @@ import { SelectEngineUseCase } from '@/modules/completions/use-cases/select-engi
 import { TTSUseCase } from '@/modules/tts/use-cases/tts';
 import { AxiosHelper } from '@/services/implementations/axios/axios';
 import { ElevenLabzHelper } from '@/services/implementations/elevenlabz/elevenlabz';
+import { mistral7BHelper } from '@/services/implementations/mistral7B/mistral7B';
 import { OllamaHelper } from '@/services/implementations/ollama/ollama';
 import { OpenAiHelper } from '@/services/implementations/openai/openai';
 
@@ -14,7 +15,8 @@ export const makeLoadChatVoice = (): LoadChatVoiceController => {
       new HumanizeChatCompletionUseCase(
         new SelectEngineUseCase(
           new OpenAiHelper(new AxiosHelper()),
-          new OllamaHelper(new AxiosHelper())
+          new OllamaHelper(new AxiosHelper()),
+          new mistral7BHelper(new AxiosHelper())
         )
       ),
       new TTSUseCase(new ElevenLabzHelper())
