@@ -2,14 +2,14 @@ import { chatId } from '../main/index.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
   loadChatIdFromUrl();
-  const navibar = document.querySelector('.navigation-lateral>ul');
+  const navibar = document.querySelector('.navigation-lateral ul');
 
   try {
     const response = await fetch('/api/chat');
     const data = await response.json();
 
-    if (data && data.length > 0) {
-      const chatList = data
+    if (data.data && data.data.length > 0) {
+      const chatList = data.data
         .map(
           (chat) => `
         <li class="nav-item">
@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async function () {
       `
         )
         .join('');
-
       navibar.innerHTML = chatList;
     }
   } catch (error) {
@@ -33,8 +32,8 @@ async function loadChatIdFromUrl() {
     const data = await response.json();
 
     if (response.ok)
-      if (data && data.length > 0) {
-        const chat = data.messages
+      if (data.data.messages && data.data.messages.length > 0) {
+        const chat = data.data.messages
           .map((message) => {
             return `
             <li class="${message.role === 'user' ? 'user-msg' : 'server-msg'}">
