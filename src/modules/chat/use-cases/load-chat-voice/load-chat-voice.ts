@@ -2,6 +2,7 @@ import { ChatRequestModel } from '@/domain/models/chat/chat';
 import { ChatState } from '@/main/states/chat-state.global';
 import { HumanizeChatCompletion } from '@/modules/completions/use-cases/humanize-chat-completion/humanize-chat-completion';
 import { TTS } from '@/modules/tts/use-cases/tts';
+import { ModelsChatCompletion } from '@/services/protocols/openai/openai';
 
 export interface LoadChatVoice {
   execute(data: ChatRequestModel): Promise<{
@@ -34,10 +35,13 @@ export class LoadChatVoiceUseCase implements LoadChatVoice {
       ],
     });
 
-    const responseString = await this.humanizeChatCompletionUseCase.execute({
-      id: data.id,
-      message: data.message.toString(),
-    });
+    const responseString = await this.humanizeChatCompletionUseCase.execute(
+      {
+        id: data.id,
+        message: data.message.toString(),
+      },
+      (data.model ?? 'openai') as ModelsChatCompletion
+    );
 
     let bufferAudio: Buffer;
 

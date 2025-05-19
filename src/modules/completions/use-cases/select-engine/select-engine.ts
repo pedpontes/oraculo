@@ -23,9 +23,12 @@ export class SelectEngineUseCase implements SelectEngine {
     if (data.model == 'openchat') {
       return await this.ollamaHelper.loadChatCompletions({
         messages: data.messages,
-        model: data.model as 'openchat' | 'llama2' | 'llama3',
+        model: data.model,
       });
+    } else if (data.model == 'openai')
+      return await this.openAiHelper.loadChatCompletions(data);
+    else {
+      throw new Error('Model not supported');
     }
-    return await this.openAiHelper.loadChatCompletions(data);
   }
 }
