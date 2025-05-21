@@ -21,6 +21,14 @@ Um dispositivo simples para fins educacionais e para o público infantil, no qua
 #### Como iniciar:
 
 - Verifique as variaveis de ambiente `.env.example`.
-- Instale as dependencias através do `yarn`
+- Instale as dependencias através do comando `yarn`
 - Inicie em modo produção com `yarn start` ou dev com `yarn dev`
 - Se tudo estiver certo, acesse interface WEB pelo link `http://localhost:{PORT}/` (Verifique a porta no seu `.env`)
+
+##### Setup com modelo IA offline:
+
+- Model: `òpenchat` através do Ollama.
+
+Requisitos:
+ - Docker
+Utilize o comando `docker-compose up --build`
