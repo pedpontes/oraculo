@@ -13,4 +13,5 @@ export const ENV = {
     apiKey: process.env.OPENAI_API_KEY || '',
     baseApiUrl: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
   },
+  mistralUrl: process.env.MISTRAL_7B_URL || '',
 };
