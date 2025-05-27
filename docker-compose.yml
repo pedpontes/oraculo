@@ -1,31 +1,31 @@
 services:
-  ollama:
-    image: ollama/ollama
-    container_name: ollama
-    ports:
-      - '11434:11434'
-    volumes:
-      - ollama_models:/root/.ollama
-    restart: unless-stopped
-    entrypoint:
-      [
-        '/bin/sh',
-        '-c',
-        'ollama serve & sleep 3 && ollama pull openchat && tail -f /dev/null',
-      ]
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
-
-  # tts:
-  #   build:
-  #     dockerfile: images/tts-server/Dockerfile
-  #     context: .
+  # ollama:
+  #   image: ollama/ollama
+  #   container_name: ollama
   #   ports:
-  #     - '5002:5002'
-
+  #     - '11434:11434'
+  #   volumes:
+  #     - ollama_models:/root/.ollama
+  #   restart: unless-stopped
+  #   entrypoint:
+  #     [
+  #       '/bin/sh',
+  #       '-c',
+  #       'ollama serve & sleep 3 && ollama pull openchat && tail -f /dev/null',
+  #     ]
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - capabilities: [gpu]
+  llama:
+    build: images/llama/Dockerfile
+    container_name: llama
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./models:/models
+    command: ./server -m /models/mistral-7b-instruct-v0.1.Q4_K_M.gguf -c 4096
   oraculo:
     build:
       context: .
