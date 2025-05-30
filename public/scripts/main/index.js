@@ -1,6 +1,6 @@
-export const serverUrl = document.location.hostname.includes('localhost')
-  ? 'localhost:8080'
-  : 'oraculo-ic.ddns.net';
+const serverPort = window.location.port || null;
+export const serverUrl =
+  window.location.hostname + (serverPort ? `:${serverPort}` : '');
 
 export const chatId =
   new URLSearchParams(window.location.search).get('chatId') ||

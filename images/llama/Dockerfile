@@ -1,29 +1,27 @@
 FROM ubuntu:22.04
 
-# Instalar dependências
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    cmake \
+# Instala dependências
+RUN apt-get update && apt-get install -y \
     git \
+    cmake \
+    build-essential \
     wget \
     curl \
-    python3 \
-    python3-pip \
+    libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Clonar o llama.cpp
-RUN git clone https://github.com/ggerganov/llama.cpp.git /llama.cpp
-
-# Compilar o servidor com suporte AVX2
+# Clona o repositório do llama.cpp
+RUN git clone https://github.com/ggerganov/llama.cpp.git
 WORKDIR /llama.cpp
-RUN make -j $(nproc) server
 
-# Criar diretório para os modelos
-RUN mkdir -p /models
+# Compila o projeto incluindo o llama-server
+RUN mkdir build && cd build && cmake .. && cmake --build . --config Release -j$(nproc)
 
-# Definir porta do servidor HTTP
-EXPOSE 8000
+# Cria uma pasta para os modelos
+RUN mkdir /models
 
-# Comando de inicialização
-CMD ["./server", "-m", "/models/mistral-7b-instruct-v0.1.Q4_K_M.gguf", "-c", "4096"]
+# Exponha a porta do servidor
+EXPOSE 8080
+
+# Comando para rodar o servidor
+CMD ["./build/bin/llama-server", "-m", "/models/mistral.gguf", "-c", "4096"]

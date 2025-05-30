@@ -1,53 +1,58 @@
-import { ENV } from "@/main/config/config";
-import { ApiProtocols } from "@/services/protocols/axios/axios";
-import { ChatCompletionResponseModel, ModelsChatCompletionOllamaRequest } from "@/services/protocols/openai/openai";
-import { randomUUID } from "crypto";
+import { ENV } from '@/main/config/config';
+import { ApiProtocols } from '@/services/protocols/axios/axios';
+import {
+  ChatCompletionResponseModel,
+  ModelsChatCompletionOllamaRequest,
+} from '@/services/protocols/openai/openai';
 
-export class mistral7BHelper{
+export class mistral7BHelper {
+  private readonly baseApiUrl: string;
+  constructor(private readonly axiosHelper: ApiProtocols) {
+    this.baseApiUrl = ENV.mistralUrl;
+  }
 
-    private readonly baseApiUrl: string;
-      constructor(private readonly axiosHelper: ApiProtocols) {
-        this.baseApiUrl = ENV.mistralUrl;
-      }
+  async loadChatCompletions(
+    data: ModelsChatCompletionOllamaRequest
+  ): Promise<ChatCompletionResponseModel> {
+    const { messages, model } = data;
 
-      async loadChatCompletions(
-        data: ModelsChatCompletionOllamaRequest
-      ): Promise<ChatCompletionResponseModel> {
-        const { messages, model } = data;
-        const response = await this.axiosHelper.post(
-            this.baseApiUrl, {pergunta:JSON.stringify(messages)},
-            {
-                headers: {
-                'Content-Type': 'application/json',
-                },        
-            }
-        )
-        console.log(response)
-        return {
-                  id: randomUUID(),
-                  object: 'chat.completion',
-                  usage: {
-                    completion_tokens: 0,
-                    prompt_tokens: 0,
-                    total_tokens: 0,
-                  },
-                  model: model as any,
-                  created: Date.now(),
-                  choices: [
-                    {
-                      finish_reason: 'stop',
-                      index: 0,
-                      message: {
-                        role: 'assistant',
-                        content: response.data.resposta,
-                        refusal: null,
-                        annotations: [],
-                      },
-                    },
-                  ],
-                }
-    }
+    console.log('Request to mistral7B:', {
+      model,
+      messages,
+    });
 
+    const payload = { messages };
 
+    const response = await this.axiosHelper.post(this.baseApiUrl, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const resData = response.data;
+
+    console.log('Response from mistral7B:', resData);
+
+    return {
+      id: resData.id,
+      object: resData.object,
+      created: resData.created,
+      model: resData.model,
+      usage: {
+        completion_tokens: resData.usage.completion_tokens,
+        prompt_tokens: resData.usage.prompt_tokens,
+        total_tokens: resData.usage.total_tokens,
+      },
+      choices: resData.choices.map((choice: any, index: number) => ({
+        finish_reason: choice.finish_reason,
+        index: choice.index ?? index,
+        message: {
+          role: choice.message.role,
+          content: choice.message.content,
+          refusal: choice.message.refusal ?? null,
+          annotations: choice.message.annotations ?? [],
+        },
+      })),
+    };
+  }
 }
-
