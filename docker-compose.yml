@@ -8,7 +8,7 @@ services:
       - '8000:8080' # Porta externa 8000, interna 8080 no container
     volumes:
       - ./models:/models
-    command: ./build/bin/llama-server -m /models/mistral.gguf -c 4096 --host 0.0.0.0 --port 8080
+    command: ./build/bin/llama-server -m /models/mistral.gguf --n_threads 8 -c 4096 --host 0.0.0.0 --port 8080
     restart: unless-stopped
 
   # oraculo:
