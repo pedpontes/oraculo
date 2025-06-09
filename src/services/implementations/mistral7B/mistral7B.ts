@@ -16,18 +16,20 @@ export class mistral7BHelper {
   ): Promise<ChatCompletionResponseModel> {
     const { messages, model } = data;
 
-    const prompt = messages
-      .map(
-        (message) =>
-          '<|im_start|>' + message.role + '\n' + message.content + '<|im_end|>'
-      )
-      .join('\n');
-
     const payload = {
-      prompt,
+      dry_base: 1.78,
+      messages,
       temperature: 0.7,
-      max_tokens: 128,
-      stop: ['<|im_end|>'],
+      max_tokens: -1,
+      top_p: 0.95,
+      top_k: 40,
+      dry_allowed_length: 2,
+      frequency_penalty: 0,
+      repeat_penalty: 1,
+      stream: false,
+      timings_per_token: false,
+      cache_prompt: false,
+      xtc_threshold: 0.1,
     };
 
     const response = await this.axiosHelper.post(this.baseApiUrl, payload, {
