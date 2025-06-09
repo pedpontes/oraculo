@@ -17,10 +17,18 @@ export class mistral7BHelper {
     const { messages, model } = data;
 
     const prompt = messages
-      .map((message) => '<im_start>' + message.content + '<im_end>')
+      .map(
+        (message) =>
+          '<|im_start|>' + message.role + '\n' + message.content + '<|im_end|>'
+      )
       .join('\n');
 
-    const payload = { prompt, temperature: 0.7, max_tokens: 2048 };
+    const payload = {
+      prompt,
+      temperature: 0.7,
+      max_tokens: 128,
+      stop: ['<|im_end|>'],
+    };
 
     const response = await this.axiosHelper.post(this.baseApiUrl, payload, {
       headers: {
