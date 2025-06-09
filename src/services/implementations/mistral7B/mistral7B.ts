@@ -16,12 +16,11 @@ export class mistral7BHelper {
   ): Promise<ChatCompletionResponseModel> {
     const { messages, model } = data;
 
-    console.log('Request to mistral7B:', {
-      model,
-      messages,
-    });
+    const prompt = messages
+      .map((message) => '<im_start>' + message.content + '<im_end>')
+      .join('\n');
 
-    const payload = { messages };
+    const payload = { prompt, temperature: 0.7, max_tokens: 2048 };
 
     const response = await this.axiosHelper.post(this.baseApiUrl, payload, {
       headers: {
@@ -30,8 +29,6 @@ export class mistral7BHelper {
     });
 
     const resData = response.data;
-
-    console.log('Response from mistral7B:', resData);
 
     return {
       id: resData.id,
