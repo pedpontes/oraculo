@@ -20,8 +20,8 @@ RUN mkdir build && cd build && cmake .. && cmake --build . --config Release -j$(
 # Cria uma pasta para os modelos
 RUN mkdir /models
 
-# Exponha a porta do servidor
-EXPOSE 8080
+# # Exponha a porta do servidor
+# EXPOSE 8080
 
-# Comando para rodar o servidor
-CMD ["./build/bin/llama-server", "-m", "/models/mistral.gguf", "-c", "4096"]
+# # Comando para rodar o servidor
+# CMD ["./build/bin/llama-server", "-m", "/models/mistral.gguf", "-c", "4096"]
