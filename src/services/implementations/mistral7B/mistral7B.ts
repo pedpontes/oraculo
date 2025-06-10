@@ -40,6 +40,8 @@ export class mistral7BHelper {
 
     const resData = response.data;
 
+    console.log('Response from mistral7B:', resData);
+
     return {
       id: resData.id,
       object: resData.object,
